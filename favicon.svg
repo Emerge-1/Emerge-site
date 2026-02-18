@@ -1,0 +1,18 @@
+<svg viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-bottom-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#d4d4d8" />
+      <stop offset="100%" stop-color="#71717a" />
+    </linearGradient>
+    <linearGradient id="logo-top-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="80%" stop-color="#a1a1aa" />
+      <stop offset="100%" stop-color="#52525b" />
+    </linearGradient>
+  </defs>
+  <!-- Bottom Semi-circle Arch -->
+  <path d="M 20 64 A 30 30 0 0 1 80 64 L 68 64 A 18 18 0 0 0 32 64 Z" fill="url(#logo-bottom-grad)" />
+  <!-- Top Quarter-circle Fin -->
+  <path d="M 20 64 A 48 48 0 0 1 68 16 L 68 32 A 32 32 0 0 0 36 64 Z" fill="url(#logo-top-grad)" />
+</svg>
