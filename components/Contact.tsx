@@ -1,20 +1,50 @@
 import React, { useState } from 'react';
 import { CheckCircle2, Loader2 } from 'lucide-react';
 
+const encode = (data: Record<string, string>) => {
+  return Object.keys(data)
+    .map(key => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+    .join('&');
+};
+
 export const Contact: React.FC = () => {
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'submitted'>('idle');
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'submitted' | 'error'>('idle');
+  const [formData, setFormData] = useState({
+    name: '',
+    organization: '',
+    email: '',
+    message: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Log submission internally for tracking
-    console.log('Inquiry submitted successfully.');
-    
-    setStatus('submitted');
+
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: encode({
+          'form-name': 'contact',
+          ...formData,
+        }),
+      });
+
+      if (response.ok) {
+        setStatus('submitted');
+        setFormData({ name: '', organization: '', email: '', message: '' });
+      } else {
+        console.error('Form submission failed:', response.statusText);
+        setStatus('error');
+      }
+    } catch (err) {
+      console.error('Form submission error:', err);
+      setStatus('error');
+    }
   };
 
   if (status === 'submitted') {
@@ -50,12 +80,20 @@ export const Contact: React.FC = () => {
         </div>
         
         <form className="space-y-8" onSubmit={handleSubmit}>
+          {/* Honeypot field for spam protection — hidden from users */}
+          <p className="hidden">
+            <label>Don't fill this out: <input name="bot-field" /></label>
+          </p>
+
           <div className="grid md:grid-cols-2 gap-8">
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Full Name</label>
               <input 
                 required
-                type="text" 
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="John Doe"
                 className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-4 text-white placeholder:text-slate-700 focus:outline-none focus:border-white/30 transition-colors"
               />
@@ -64,7 +102,10 @@ export const Contact: React.FC = () => {
               <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Organization</label>
               <input 
                 required
-                type="text" 
+                type="text"
+                name="organization"
+                value={formData.organization}
+                onChange={handleChange}
                 placeholder="Aerospace Dynamics"
                 className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-4 text-white placeholder:text-slate-700 focus:outline-none focus:border-white/30 transition-colors"
               />
@@ -75,7 +116,10 @@ export const Contact: React.FC = () => {
             <label className="text-[10px] uppercase tracking-widest text-slate-500 font-bold ml-1">Work Email</label>
             <input 
               required
-              type="email" 
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="john@organization.com"
               className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-4 text-white placeholder:text-slate-700 focus:outline-none focus:border-white/30 transition-colors"
             />
@@ -86,10 +130,19 @@ export const Contact: React.FC = () => {
             <textarea 
               required
               rows={4}
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
               placeholder="Tell us about your sensing challenges..."
               className="w-full bg-white/5 border border-white/10 rounded-sm px-4 py-4 text-white placeholder:text-slate-700 focus:outline-none focus:border-white/30 transition-colors resize-none"
             />
           </div>
+
+          {status === 'error' && (
+            <p className="text-red-400 text-sm text-center">
+              Something went wrong. Please try again or email us directly at tech.emergeindustries@gmail.com
+            </p>
+          )}
 
           <button 
             type="submit"
