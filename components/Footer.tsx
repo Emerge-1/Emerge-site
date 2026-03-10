@@ -61,8 +61,8 @@ export const Footer: React.FC = () => {
               ensuring the integrity of the critical components that power our world.
             </p>
           </div>
-          <div className="flex md:justify-end items-end">
-            <div className="text-right">
+          <div className="flex justify-end items-end">
+            <div className="text-left md:text-right">
               <h5 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 mb-6">HEADQUARTERS</h5>
               <p className="text-sm text-slate-400">Palo Alto, California</p>
               <p className="text-sm text-slate-400">United States</p>
